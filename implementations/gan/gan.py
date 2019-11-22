@@ -92,7 +92,9 @@ class GAN():
 
         Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
         for epoch in range(epochs):
-            for i, (imgs, _) in enumerate(dataloader):
+            d_loss_cum=0
+            g_loss_cum=0
+            for i, (imgs, _) in enumerate(self.dataloader):
 
                 # Adversarial ground truths
                 valid = Variable(Tensor(imgs.size(0), 1).fill_(1.0), requires_grad=False)
@@ -133,14 +135,21 @@ class GAN():
                 d_loss.backward()
                 optimizer_discriminator.step()
 
-                print(
-                    "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]"
-                    % (epoch, epochs, i, len(dataloader), d_loss.item(), g_loss.item())
-                )
+                
 
                 batches_done = epoch * len(dataloader) + i
                 if batches_done % sample_interval == 0:
                     save_image(gen_imgs.data[:25], "images/%d.png" % batches_done, nrow=5, normalize=True)
+                
+                d_loss_cum += d_loss.item()
+                g_loss_cum += g_loss.item()
+
+            d_loss_cum /= len(self.dataloader)
+            g_loss_cum /= len(self.dataloader)
+            print(
+                    "[Epoch %d/%d] [D loss: %f] [G loss: %f]"
+                    % (epoch, epochs, i, len(dataloader), d_loss.item(), g_loss.item())
+                )
 
 
 
