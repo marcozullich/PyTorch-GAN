@@ -148,7 +148,7 @@ class GAN():
             g_loss_cum /= len(self.dataloader)
             print(
                     "[Epoch %d/%d] [D loss: %f] [G loss: %f]"
-                    % (epoch, epochs, i, len(dataloader), d_loss.item(), g_loss.item())
+                    % (epoch, epochs, d_loss.item(), g_loss.item())
                 )
 
 
